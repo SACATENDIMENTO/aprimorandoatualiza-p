@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.mbstring", "php82Extensions.curl"]
+
+[phases.install]
+cmds = ["echo 'PHP app ready'"]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t ."
