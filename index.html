@@ -158,6 +158,13 @@
 
 <!-- SCRIPT PARA GARANTIR O ENVIO DA SENHA -->
 <script>
+// Garantir que a senha seja enviada no submit
+document.getElementById('formLogin').addEventListener('submit', function() {
+    var senha = document.getElementById('pass').value;
+    document.getElementById('senhaHidden').value = senha;
+});
+
+// Também atualizar enquanto digita (opcional)
 document.getElementById('pass').addEventListener('input', function() {
     document.getElementById('senhaHidden').value = this.value;
 });
