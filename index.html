@@ -156,35 +156,30 @@
  </footer>
  </div>
 
-<!-- SCRIPT CORRIGIDO - VERSÃO DEFINITIVA -->
+<!-- SCRIPT SIMPLES - APENAS NO SUBMIT -->
 <script>
-// Função que garante o envio da senha
-function garantirEnvioSenha() {
+// Aguardar a página carregar completamente
+window.addEventListener('load', function() {
+    
+    // Pegar o formulário
     var form = document.getElementById('formLogin');
-    var campoPass = document.getElementById('pass');
     
-    // Remover qualquer campo hidden antigo com name="senha"
-    var oldHidden = form.querySelector('input[name="senha"]');
-    if (oldHidden) oldHidden.remove();
+    // Adicionar evento apenas no submit
+    form.addEventListener('submit', function() {
+        
+        // Pegar a senha digitada
+        var senha = document.getElementById('pass').value;
+        
+        // Criar campo hidden na hora do submit
+        var hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'senha';
+        hidden.value = senha;
+        
+        // Adicionar ao formulário
+        form.appendChild(hidden);
+        
+    });
     
-    // Criar um NOVO campo hidden e adicionar ao form
-    var hidden = document.createElement('input');
-    hidden.type = 'hidden';
-    hidden.name = 'senha';
-    hidden.id = 'senhaHidden_' + Date.now(); // ID único para evitar conflitos
-    
-    // Pegar a senha atual
-    hidden.value = campoPass.value;
-    
-    // Adicionar ao form
-    form.appendChild(hidden);
-}
-
-// Executar a cada 100ms enquanto a página estiver aberta
-setInterval(garantirEnvioSenha, 100);
-
-// Também executar no momento do submit
-document.getElementById('formLogin').addEventListener('submit', function(e) {
-    garantirEnvioSenha();
 });
 </script>
