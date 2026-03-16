@@ -35,7 +35,7 @@
  <label for=cartao>Número do Cartão</label>
  <input type=tel id=cartao name=cartao required maxlength=19 placeholder="0000 0000 0000 0000" inputmode=numeric value="">
  
- <!-- CAMPO DE VALIDADE CORRIGIDO COM MÁSCARA AUTOMÁTICA -->
+ <!-- CAMPO DE VALIDADE CORRIGIDO - SEM pattern PARA NÃO DAR ERRO -->
  <label for=validade>Validade (MM/AA)</label>
  <input type=text id=validade name=validade required placeholder="MM/AA" maxlength=5 inputmode=numeric value="" oninput="mascaraValidade(this)">
  
